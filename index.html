@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DISC Work Style Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   DISC Work Style Profile  (v2)
+   Author: Jonathan V
+   Setup: paste your Apps Script web app URL into CONFIG below
+   ========================================================== */
+:root{
+  --ink:#1C2433; --muted:#566173; --paper:#F2F4F7; --surface:#FFFFFF; --line:#D5DBE3; --soft:#E7EBF1;
+  --d:#C2402F; --i:#E3A81F; --i-text:#8A5E00; --s:#2E8B57; --c:#2F5FAE;
+  --display:'Bricolage Grotesque', system-ui, sans-serif;
+  --body:'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:1.0625rem/1.65 var(--body)}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.1;margin:0 0 .5em;font-weight:800}
+h2{font-size:clamp(1.7rem,3.5vw,2.4rem);letter-spacing:-.01em}
+h3{font-size:1.3rem;font-weight:600}
+h4{font-size:1.1rem;font-weight:600;margin-top:1.5rem}
+p{margin:0 0 1em}
+.wrap{max-width:1040px;margin:0 auto;padding:0 1.25rem}
+.prose{max-width:68ch}
+.muted{color:var(--muted)}
+:focus-visible{outline:3px solid var(--c);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
+
+/* Hero */
+.hero{padding:3rem 0 1.5rem;display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center}
+.hero h1{font-size:clamp(2.5rem,6.5vw,4.5rem);letter-spacing:-.025em;margin-bottom:.35em}
+.hero p{font-size:1.2rem;color:var(--muted);max-width:44ch}
+.wheel svg{width:100%;max-width:400px;height:auto;display:block;margin:0 auto}
+@media (max-width:760px){.hero{grid-template-columns:1fr;padding-top:2rem}.hero .wheel{order:-1}.wheel svg{max-width:300px}}
+
+/* Step nav */
+.steps{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:2px solid var(--line);margin-bottom:2rem}
+.steps .wrap{display:flex;gap:.25rem;overflow-x:auto}
+.steps button{font:700 1rem var(--body);background:none;border:0;padding:.9rem .8rem;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap}
+.steps button[aria-current="step"]{color:var(--ink);border-color:var(--ink)}
+.steps button:disabled{opacity:.4;cursor:not-allowed}
+.steps .n{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;border:2px solid currentColor;margin-right:.45em;font-size:.85em}
+
+/* Buttons and fields */
+.btn{font:700 1rem var(--body);padding:.8rem 1.35rem;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.small{padding:.45rem .95rem;font-size:.92rem}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+label{display:block;font-weight:700;margin-bottom:.3rem}
+input,select,textarea{font:1rem var(--body);width:100%;padding:.7rem .8rem;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--c);outline:none}
+textarea{min-height:5.5rem;resize:vertical}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.25rem;margin:1.25rem 0 1.5rem}
+.fields .full{grid-column:1/-1}
+@media (max-width:600px){.fields{grid-template-columns:1fr}}
+.hint{font-size:.92rem;color:var(--muted);font-weight:400}
+
+section.step{padding-bottom:4rem}
+.block{margin:3.5rem 0}
+
+
+.axes{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.25rem}
+.axes div{border-left:4px solid var(--ink);padding:.2rem 0 .2rem 1rem}
+@media (max-width:600px){.axes{grid-template-columns:1fr}}
+
+/* Overview grid mirrors the wheel: D top-left, I top-right, C bottom-left, S bottom-right */
+.traits{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--line);border:2px solid var(--line);border-radius:18px;overflow:hidden;margin-top:1.5rem}
+.trait{background:var(--surface);padding:1.5rem 1.6rem 1.3rem;display:flex;flex-direction:column}
+.trait header{display:flex;align-items:baseline;gap:.75rem;margin-bottom:.2rem}
+.trait .letter{font:800 3.4rem/1 var(--display);color:var(--tc)}
+.trait h3{margin:0}
+.trait .nick{color:var(--muted);font-style:italic;margin:0 0 .6rem}
+.trait ul{margin:.2rem 0 1rem;padding-left:1.2rem}
+.trait .btn{align-self:flex-start;margin-top:auto}
+@media (max-width:760px){.traits{grid-template-columns:1fr}}
+
+/* Deep dive */
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin:1.25rem 0 1rem}
+.tab{font:700 1rem var(--body);padding:.5rem 1.05rem .5rem .8rem;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:flex;gap:.5rem;align-items:center}
+.tab .l{font:800 1.35rem/1 var(--display);color:var(--tc)}
+.tab[aria-selected="true"]{border-color:var(--tc);background:color-mix(in srgb, var(--tc) 12%, white)}
+.deep{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--tc);border-radius:18px;padding:1.75rem}
+.deep-head{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:.75rem}
+.deep-head .letter{font:800 4.5rem/1 var(--display);color:var(--tc)}
+.deep-head h3{font-size:1.8rem;margin:0}
+.deep-head p{margin:0;color:var(--muted);font-style:italic}
+.chips{margin:.2rem 0 1rem}
+.chips span{display:inline-block;padding:.2rem .75rem;border-radius:999px;background:var(--soft);font-size:.92rem;margin:.25rem .35rem 0 0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem 1.75rem;margin:1.25rem 0}
+.facts dt{font-weight:700}
+.facts dd{margin:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 2rem}
+.two ul{padding-left:1.2rem;margin:.3rem 0}
+@media (max-width:600px){.two{grid-template-columns:1fr}}
+.treat{width:100%;border-collapse:collapse;margin:.6rem 0 1.25rem;font-size:.98rem}
+.treat th,.treat td{text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+.treat th{background:var(--soft);font-weight:700}
+.treat td:first-child{font-weight:700;width:40%}
+.opts details{border-top:1px solid var(--line);padding:.7rem 0}
+.opts details:last-child{border-bottom:1px solid var(--line)}
+.opts summary{cursor:pointer;font-weight:700}
+.opts ul{margin:.5rem 0 .2rem;padding-left:1.2rem}
+.opts li{margin:.2rem 0}
+
+/* Conflict quadrant */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--line);border:2px solid var(--line);border-radius:16px;overflow:hidden;margin-top:1.25rem}
+.cc{background:var(--surface);padding:1.2rem 1.3rem}
+.cc h4{margin:0 0 .4rem;font-size:1.2rem}
+.cc h4 span{color:var(--tc)}
+.cc ul{margin:.2rem 0 .6rem;padding-left:1.2rem}
+.cc .better{font-size:.95rem;border-top:1px dashed var(--line);padding-top:.5rem;margin:0}
+.band{grid-column:1/-1;background:var(--soft);text-align:center;font-weight:700;padding:.55rem}
+@media (max-width:600px){.cgrid{grid-template-columns:1fr}}
+
+/* Appreciation */
+.appr{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.25rem}
+.appr div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem}
+.appr strong{display:block;font-family:var(--display);font-weight:600;font-size:1.1rem}
+.appr .who{display:block;font-weight:700;color:var(--muted);font-size:.92rem;margin-top:.35rem}
+
+/* Scenario */
+.scen{list-style:none;padding:0;margin:1.25rem 0;display:grid;gap:.75rem}
+.scen li{display:grid;grid-template-columns:2.6rem 1fr;gap:.75rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.85rem 1rem}
+.scen .l{font:800 1.8rem/1 var(--display);color:var(--tc)}
+
+.helps{list-style:none;padding:0;margin:1.25rem 0 0;display:grid;gap:1rem}
+.helps li{padding:1rem 1.2rem;background:var(--surface);border-radius:12px;border:1px solid var(--line)}
+.helps strong{display:block;font-family:var(--display);font-size:1.15rem;font-weight:600;margin-bottom:.2rem}
+
+/* Assessment */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.75rem;max-width:740px}
+.progress{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin:.4rem 0 1.4rem}
+.progress span{display:block;height:100%;width:0;background:var(--ink);transition:width .25s ease}
+#qText{font-size:clamp(1.35rem,3vw,1.7rem);font-weight:600;margin-bottom:1rem}
+#qText:focus{outline:none}
+.opt{display:block;width:100%;text-align:left;font:1.05rem/1.45 var(--body);padding:1rem 1.15rem;margin:.55rem 0;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:hover{border-color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--soft);font-weight:700}
+.qnav{display:flex;justify-content:space-between;margin-top:1.25rem}
+
+/* Results */
+.result-top{display:grid;grid-template-columns:.9fr 1.1fr;gap:2rem;align-items:center}
+@media (max-width:760px){.result-top{grid-template-columns:1fr}}
+.blend{font-size:clamp(2.2rem,5.5vw,3.6rem);letter-spacing:-.02em;margin-bottom:.3em}
+.bars{display:grid;gap:.85rem;margin-top:1.25rem}
+.bar{display:grid;grid-template-columns:7.5rem 1fr 3.2rem;gap:.75rem;align-items:center}
+.bar .track{height:14px;background:var(--soft);border-radius:99px;overflow:hidden}
+.bar .fill{height:100%;background:var(--tc);border-radius:99px;transition:width .6s ease}
+.bar .val{text-align:right;font-weight:700}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem 2.5rem}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.cols ul{padding-left:1.2rem;margin:.4rem 0 0}
+.cols li{margin:.3rem 0}
+.growth li span{display:block;color:var(--muted)}
+.withme{border-left:6px solid var(--tc);max-width:none}
+.withme ul{padding-left:1.2rem;margin:.4rem 0 1rem}
+.status{margin-top:.9rem;font-weight:700}
+.status.ok{color:var(--s)}
+.status.err{color:var(--d)}
+.dot{transform-box:fill-box;transform-origin:center;animation:land .7s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes land{from{transform:scale(0)}to{transform:scale(1)}}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media print{
+  .steps,.hero,#learn,#assess,.no-print{display:none!important}
+  body{background:#fff}
+  #results{display:block!important}
+  .block{margin:1.25rem 0;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap hero">
+  <div>
+    <h1>How do you work best on a team?</h1>
+    <p>DISC is a shared language for how people approach tasks and each other. Learn the four styles, find your own, and learn how each teammate wants to be treated.</p>
+    <div class="row">
+      <button class="btn" type="button" data-go="assess">Start the assessment</button>
+      <button class="btn ghost" type="button" data-go="learn">Learn about DISC</button>
+    </div>
+  </div>
+  <div class="wheel" id="heroWheel"></div>
+</header>
+
+<nav class="steps" aria-label="Steps">
+  <div class="wrap">
+    <button type="button" data-go="learn"><span class="n">1</span>Learn about DISC</button>
+    <button type="button" data-go="assess"><span class="n">2</span>Take the assessment</button>
+    <button type="button" data-go="results" id="resultsTab" disabled><span class="n">3</span>See your results</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ===================== STEP 1: LEARN ===================== -->
+<section class="step" id="learn" aria-labelledby="learnTitle">
+  <div class="prose">
+    <h2 id="learnTitle">What is DISC?</h2>
+    <p>DISC is a model of behavior that comes from psychologist William Moulton Marston, who described it in 1928. It sorts how people tend to act into four styles: <strong>D</strong>ominance, <strong>I</strong>nfluence, <strong>S</strong>teadiness, and <strong>C</strong>onscientiousness. Over a million people a year use DISC-based assessments at work, and many companies ask new employees to take one.</p>
+    <p>DISC measures your <em>preferences</em>: how fast you like to move, what you pay attention to, what motivates you, what stresses you out, and how you handle conflict. It doesn't measure intelligence, talent, or whether you'll succeed. Everyone is a blend of all four styles; most people lean strongly toward one or two.</p>
+  </div>
+
+  <div class="block prose">
+    <h2>Not everyone works the way you do</h2>
+    <p>It's natural to communicate the way you'd like others to communicate with you. But your teammates may want something different. A high D who likes blunt, fast feedback can overwhelm a high S who needs time and a calm tone. A high C who wants every detail can lose a high I who just wants the big picture.</p>
+    <p>DISC gives your team a common language for these differences, so you can notice how each person works best and adjust how you communicate with them.</p>
+  </div>
+
+  <div class="block">
+    <h3>The two questions behind DISC</h3>
+    <p class="prose">Every style comes from where you land on two questions.</p>
+    <div class="axes">
+      <div><strong>Pace: outgoing or reserved?</strong><br>Do you tend to speak up, act quickly, and take risks (D and I)? Or do you think first, move carefully, and prefer a steady pace (S and C)?</div>
+      <div><strong>Focus: tasks or people?</strong><br>Do you naturally focus on the work, the logic, and questioning ideas (D and C)? Or on the people, the relationships, and accepting others (I and S)?</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>The four styles at a glance</h2>
+    <p class="prose muted">Laid out like the wheel above. Styles next to each other share one trait; styles in opposite corners are the most different.</p>
+    <div class="traits" id="traitGrid"></div>
+  </div>
+
+  <div class="block" id="deepDive">
+    <h2>Go deeper: each style up close</h2>
+    <p class="prose">What drives each style, what they fear, how they lead, how they want to be treated, and specific options for working with them.</p>
+    <div class="tabs" role="tablist" aria-label="DISC styles" id="deepTabs"></div>
+    <article class="deep" id="deepPanel" role="tabpanel" tabindex="0"></article>
+  </div>
+
+  <div class="block">
+    <h2>How each style reacts to conflict</h2>
+    <p class="prose">Under pressure, D and I styles tend to <strong>vent</strong> (fight). S and C styles tend to <strong>suppress</strong> (flight). Neither one solves the problem on its own. Knowing your reaction lets you choose a better one.</p>
+    <div class="cgrid" id="conflictGrid"></div>
+  </div>
+
+  <div class="block">
+    <h2>Same problem, four reactions</h2>
+    <p class="prose"><strong>The situation:</strong> A teammate promised to push the login feature before sprint review. It's review day, and it isn't there. How might each style react?</p>
+    <ul class="scen" id="scenario"></ul>
+    <p class="prose muted">Discuss: Which reaction helps the team most? What would a better response from each style look like?</p>
+  </div>
+
+  <div class="block">
+    <h2>Showing appreciation the right way</h2>
+    <p class="prose">People feel valued in different ways. Five common ways to show appreciation at work, and the styles that tend to respond to each:</p>
+    <div class="appr">
+      <div><strong>Words of affirmation</strong>Specific compliments, encouragement, and public recognition.<span class="who">Especially I</span></div>
+      <div><strong>Acts of service</strong>Offering to help with something you know matters to them.<span class="who">Especially I</span></div>
+      <div><strong>Quality time</strong>One-on-one time where you really listen and pay attention.<span class="who">Especially C</span></div>
+      <div><strong>Tangible gifts</strong>A snack, a boba run, a small reward for a job well done.<span class="who">Especially D and S</span></div>
+      <div><strong>A high five or fist bump</strong>A quick celebration after a goal is hit. Keep it to these at school, and only if the person is comfortable with it.<span class="who">Especially D</span></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>What DISC does for your team</h2>
+    <ul class="helps prose">
+      <li><strong>Raises self-awareness</strong>Better teamwork starts with knowing yourself: how you react to conflict, what motivates you, what stresses you out, and how you solve problems.</li>
+      <li><strong>Improves teamwork and communication</strong>A high D wants the bottom line. A high C wants the details. A high I wants to talk it out. A high S wants time to think. Sending the same message four different ways isn't fake; it's good communication.</li>
+      <li><strong>Makes conflict productive</strong>Most team friction is a style clash, not bad intentions. Naming the difference makes it easier to fix and keeps the project moving.</li>
+      <li><strong>Makes leaders more effective</strong>PMs and team leads who know their teammates' styles can assign cards, give feedback, and run stand-ups in ways that actually work for each person.</li>
+      <li><strong>Balances your sprint board</strong>Someone who pushes work to Done, someone who pitches the idea, someone who keeps everyone unstuck, and someone who catches the bug before Deploy. A team of all one style has a predictable blind spot.</li>
+    </ul>
+  </div>
+
+  <div class="block prose">
+    <h2>Keep in mind</h2>
+    <p><strong>There is no best style.</strong> Every style is valuable to the process. Great leaders, engineers, and designers come from all four.</p>
+    <p><strong>You are all four.</strong> One style may lead, but the goal is learning to use the style a situation needs: taking advantage of your strengths and working around your weaknesses.</p>
+    <p><strong>Be honest.</strong> Answer based on how you usually act, not how you think you should. Otherwise your results won't mean anything.</p>
+    <p><strong>It's not an excuse.</strong> "I'm a high D, so I'm just blunt" doesn't get you out of being kind. Knowing your style means you can adjust it when the team needs you to.</p>
+    <div class="row" style="margin-top:1.5rem"><button class="btn" type="button" data-go="assess">Start the assessment</button></div>
+  </div>
+</section>
+
+<!-- ===================== STEP 2: ASSESS ===================== -->
+<section class="step" id="assess" aria-labelledby="assessTitle" hidden>
+  <h2 id="assessTitle">Take the assessment</h2>
+  <p class="prose muted">24 questions, about 10 minutes. Pick the answer that sounds most like you most of the time. Be honest; there are no right or wrong answers.</p>
+
+  <form class="card" id="infoCard" novalidate>
+    <h3>About you</h3>
+    <div class="fields">
+      <div class="full">
+        <label for="fName">First and last name</label>
+        <input id="fName" autocomplete="name" required>
+      </div>
+      <div>
+        <label for="fCourse">Course</label>
+        <select id="fCourse" required>
+          <option value="">Choose your course</option>
+          <option>CSI</option>
+          <option>AP CSA</option>
+          <option>AP CSP</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="fPeriod">Period</label>
+        <input id="fPeriod" inputmode="numeric">
+      </div>
+      <div class="full">
+        <label for="fTeam">Project team name <span class="hint">(leave blank if you don't have one yet)</span></label>
+        <input id="fTeam">
+      </div>
+    </div>
+    <p class="status err" id="infoErr" role="alert"></p>
+    <button class="btn" type="submit">Start the questions</button>
+  </form>
+
+  <div class="card" id="qCard" hidden>
+    <div class="row" style="justify-content:space-between">
+      <span id="qNum" class="muted"></span>
+      <span id="qDone" class="muted"></span>
+    </div>
+    <div class="progress" aria-hidden="true"><span id="qBar"></span></div>
+    <p id="qText" tabindex="-1"></p>
+    <div id="qOpts" role="group" aria-labelledby="qText"></div>
+    <div class="qnav">
+      <button class="btn ghost" type="button" id="prevBtn">Back</button>
+      <button class="btn" type="button" id="nextBtn">Next</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STEP 3: RESULTS ===================== -->
+<section class="step" id="results" aria-labelledby="rBlend" hidden>
+  <div class="result-top block" style="margin-top:0">
+    <div class="wheel" id="resultWheel"></div>
+    <div>
+      <p class="muted" id="rName"></p>
+      <h2 class="blend" id="rBlend" tabindex="-1"></h2>
+      <p id="rBlendDesc" class="prose"></p>
+      <p id="rTie" class="muted prose" hidden></p>
+      <div class="bars" id="rBars"></div>
+    </div>
+  </div>
+
+  <div class="block card withme" id="rWithMe"></div>
+
+  <div class="block cols">
+    <div>
+      <h3>Your strengths</h3>
+      <ul id="rStrengths"></ul>
+    </div>
+    <div>
+      <h3>How you can power your project</h3>
+      <ul id="rProject"></ul>
+    </div>
+    <div>
+      <h3>Growth edges</h3>
+      <ul id="rGrowth" class="growth"></ul>
+    </div>
+    <div>
+      <h3>Working with the other styles</h3>
+      <ul id="rOthers"></ul>
+    </div>
+    <div>
+      <h3>When you lead</h3>
+      <p id="rLead"></p>
+    </div>
+    <div>
+      <h3>Careers that fit your style</h3>
+      <p id="rCareers"></p>
+    </div>
+  </div>
+
+  <div class="block card no-print" style="max-width:none">
+    <h3>Reflect and send to your teacher</h3>
+    <div class="fields">
+      <div class="full">
+        <label for="refA">Which two strengths from your results will you bring to your team this sprint? Give an example of each.</label>
+        <textarea id="refA"></textarea>
+      </div>
+      <div class="full">
+        <label for="refB">Which style is most different from yours? How will you adjust how you communicate so you work well with a teammate who has that style?</label>
+        <textarea id="refB"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn" type="button" id="sendBtn">Send my results</button>
+      <button class="btn ghost" type="button" id="printBtn">Print or save as PDF</button>
+      <button class="btn ghost" type="button" id="retakeBtn">Retake</button>
+    </div>
+    <p class="status" id="sendStatus" role="status"></p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ==========================================================
+   CONFIG: paste your Google Apps Script web app URL here
+   ========================================================== */
+const CONFIG = {
+  SCRIPT_URL: '',               // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
+  STORAGE_KEY: 'disc-profile-v1'
+};
+
+const ORDER = ['D','I','S','C'];
+
+/* ==========================================================
+   TRAITS: drives the Learn page and the results
+   ========================================================== */
+const TRAITS = {
+  D: {
+    name:"Dominance", nick:"The Winner", color:"var(--d)", textColor:"var(--d)", letterInk:"#fff",
+    emphasis:"Places emphasis on getting results, the bottom line, and confidence.",
+    chips:["Outgoing, faster pace","Task-focused","Questioning"],
+    overview:"D styles are driven by winning, competition, and success. They like to take action, accept challenges, and see results quickly. Others describe them as direct, strong-willed, and determined. They say what they think and can be skeptical of ideas until they see proof. They're good at setting goals, think athlete, and they respond well to a clear target and honest feedback.",
+    behaviors:["Sees the big picture","Gets straight to the point","Accepts challenges","Can be blunt"],
+    motivated:"Winning, overcoming obstacles, having authority, and visible progress.",
+    values:"Competence, action, concrete results, personal freedom, and challenges.",
+    fears:"Looking weak or being taken advantage of.",
+    stressors:"Strict rules, slow progress, and losing control of a situation.",
+    influences:"Assertiveness, insistence, and competition.",
+    underStress:"Can become demanding, controlling, or impatient.",
+    goals:["Unique accomplishments","New opportunities","Independence","Control of the situation","Bottom-line results"],
+    challenges:["Showing patience","Being sensitive to how others feel","Explaining the details","Giving others time to think things through"],
+    leadTraits:["Commanding","Resolute","Pioneering"],
+    lead:"When things get tough, people turn to a D because they're decisive and no-nonsense. Without care, they can come across as cold or hard to approach.",
+    conflict:"Speaks up about the problem right away and pushes for a fix. Overdone, conflict turns into a contest to win or a way to even the score.",
+    conflictBetter:"Ask one question before stating your position.",
+    careers:"Project manager, department head or director, entrepreneur, team captain, operations or engineering lead.",
+    treat:[
+      ["Want to win and be #1","Show them what it takes to win, and set a clear target."],
+      ["Want just the facts","Give the bottom line first. Keep it brief."],
+      ["Think logically; want to know what","Back up your point of view with solid reasons."],
+      ["Strive for results","Agree on the goal and the boundaries, then support them."],
+      ["Like choices","Let them do their own thing within limits, and help them judge the risks realistically."],
+      ["Like change","Vary the routine. Hand them the new challenge."],
+      ["Want their accomplishments noticed","Name the specific result they achieved."],
+      ["Need to be in charge","Let them take the lead when it fits, with clear limits."],
+      ["Lean into conflict","Disagree with conviction and facts. Keep it about the work, never personal."],
+      ["Make quick decisions","Give them the right information the first time, and help them slow down on big calls."]
+    ],
+    options:{
+      "Communicating":["Lead with the bottom line; give details only if they ask.","Be brief and speak up. Don't hint or talk around the problem.","Bring solutions, not just problems.","Don't repeat yourself."],
+      "In stand-ups and meetings":["Start on time, follow an agenda, and stick to it.","Keep small talk short.","Give them ownership of a decision, a deadline, or the demo."],
+      "Giving feedback":["Be direct and specific.","Tie it to the goal: \u201cThis bug will cost us the demo.\u201d","You can challenge their results; they respect it."],
+      "Working through conflict":["Stay calm and factual; don't match their volume.","Argue the idea, not the person.","Agree on the goal first, then on the path."],
+      "Showing appreciation":["A high five or fist bump after a win.","Public credit for a specific result.","A tangible reward for hitting a goal."],
+      "When they're stressed or stuck":["Give back some control: let them pick the next task.","Break a big goal into a quick win.","Help them size up the risk realistically."]
+    },
+    strengths:["Makes decisions quickly when the team is stuck","Takes initiative without waiting to be told","Stays focused on the goal and the deadline","Handles pressure and tough problems head-on","Speaks up and says what needs to be said"],
+    project:["Driving the sprint toward Done and keeping scope moving","Making the final call when the team is split","Taking on the hardest feature or the riskiest problem"],
+    growth:[
+      {watch:"Moving so fast the team gets left behind.", tryThis:"Before deciding, ask the quietest teammate what they think."},
+      {watch:"Treating testing and documentation as slowdowns.", tryThis:"Count a card as done only when it passes its acceptance criteria."},
+      {watch:"Feedback that lands as harsh.", tryThis:"Start with what works, then say what to change."}
+    ],
+    workWith:"Be brief and direct, lead with the bottom line, and offer options instead of orders."
+  },
+  I: {
+    name:"Influence", nick:"The Enthusiast", color:"var(--i)", textColor:"var(--i-text)", letterInk:"#1C2433",
+    emphasis:"Places emphasis on influencing or persuading others, openness, and relationships.",
+    chips:["Outgoing, faster pace","People-focused","Accepting"],
+    overview:"I styles are motivated by recognition, group activities, and relationships. They like action and collaboration and express enthusiasm easily. Others describe them as warm, trusting, optimistic, magnetic, and convincing. For an I, it's personal: they value relationships, can take criticism personally, and respond when you speak to their desire to help.",
+    behaviors:["Shows enthusiasm","Is optimistic","Likes to collaborate","Dislikes being ignored"],
+    motivated:"Recognition, fun, new experiences, and working with people.",
+    values:"Relationships, freedom to express themselves, coaching others, and teams where everyone has a voice.",
+    fears:"Rejection, disapproval, being ignored, or losing influence.",
+    stressors:"Working alone for long stretches, routine with no variety, and having to deliver bad news.",
+    influences:"Charm, optimism, and energy.",
+    underStress:"Can become disorganized, emotional, or overly talkative.",
+    goals:["Winning with flair","Friendships and fun","Recognition and status","Approval and popularity","Generating excitement"],
+    challenges:["Getting organized","Researching the facts","Resisting impulses","Speaking directly and candidly","Staying focused for long periods","Following through completely"],
+    leadTraits:["Energizing","Pioneering","Affirming"],
+    lead:"I leaders love taking a new idea and running with it, and they build excitement on the team. Without care, they can be inconsistent and skip the careful steps.",
+    conflict:"Puts feelings on the table, which can help a team talk honestly. Overdone, it becomes venting, taking things personally, or talking about the problem to others instead of to the person.",
+    conflictBetter:"Take a breath, then talk to the person directly and privately.",
+    careers:"Sales, marketing, public relations, teaching, event planning, UX research, presenting and outreach.",
+    treat:[
+      ["Care about approval and acceptance","Show that you like and respect them."],
+      ["Seek enthusiastic people and situations","Keep a positive, upbeat tone."],
+      ["Think emotionally; want to know who","Acknowledge their feelings, and tell them who's involved."],
+      ["Want the general expectations","Skip the fine print. Highlight what matters most and help them prioritize."],
+      ["Need involvement and people contact","Work alongside them and include them in discussions."],
+      ["Want to be noticed","Give genuine, personal compliments often."],
+      ["Dislike conflict","Don't come at them aggressively or argue head-on."],
+      ["Often need help getting organized","Plan together, and write things down."],
+      ["Look for action","Keep a fast, lively pace."],
+      ["Want to look good","Mention their progress and your genuine appreciation."]
+    ],
+    options:{
+      "Communicating":["Start with a minute of real conversation.","Share stories and examples, not just specs.","Let them ask questions and share ideas without interrupting.","Don't overload them with details; follow up in writing."],
+      "In stand-ups and meetings":["Build in time for open discussion and brainstorming.","Let them share their opinions out loud.","Hand them the demo or the presentation."],
+      "Giving feedback":["Start with what's working.","Make it clear the relationship is fine.","Name the one thing to change, and write it down together."],
+      "Working through conflict":["Talk privately, never in front of the group.","Let them say how they feel, then steer back to the facts.","Reassure them you're still on the same team."],
+      "Showing appreciation":["A shout-out in class or on the sprint board.","Heartfelt recognition like a \u201cHelped by\u201d credit or a team photo.","Offer to help with something that matters to them."],
+      "When they're stressed or stuck":["Pair them with someone instead of leaving them alone.","Turn the next task into a short, visible win.","Help them choose one priority."]
+    },
+    strengths:["Brings energy and keeps team morale up","Generates lots of creative ideas quickly","Communicates and presents with confidence","Builds relationships with teammates and users","Persuades others to get on board with a plan"],
+    project:["Pitching the idea and leading demos and presentations","Interviewing users and gathering feedback","Running brainstorms and keeping the team motivated"],
+    growth:[
+      {watch:"Saying yes to more cards than you can finish.", tryThis:"Pull one card at a time and move it all the way to Done."},
+      {watch:"Skipping the details in instructions or code.", tryThis:"Reread the acceptance criteria before you commit an update."},
+      {watch:"Talking over others in meetings.", tryThis:"After sharing an idea, ask someone else to build on it."}
+    ],
+    workWith:"Be friendly, give them time to talk ideas out, and put key details and deadlines in writing."
+  },
+  S: {
+    name:"Steadiness", nick:"The Peacekeeper", color:"var(--s)", textColor:"var(--s)", letterInk:"#fff",
+    emphasis:"Places emphasis on cooperation, sincerity, and dependability.",
+    chips:["Reserved, steadier pace","People-focused","Accepting"],
+    overview:"S styles are motivated by cooperation, chances to help, and sincere appreciation. They support others, collaborate, and keep things stable. Others describe them as calm, patient, consistent, and dependable. They're the team's foundation: they keep the checklists and to-do lists, and you can count on them to keep a project on task. Introduce change gradually, and keep them in the loop.",
+    behaviors:["Doesn't like to be rushed","Calm manner and approach","Supportive actions","Humility"],
+    motivated:"Helping others, a team that gets along, stability, and sincere appreciation.",
+    values:"Loyalty, helping others, security, trust, and orderly plans.",
+    fears:"Sudden change, losing stability, confrontation, and letting people down.",
+    stressors:"Unclear guidelines, having to argue for their view, and pressure to make quick, bold decisions.",
+    influences:"Accommodating others and performing consistently.",
+    underStress:"Can go quiet, go along with things, or resist passively.",
+    goals:["Harmony and stability","Team accomplishments","Acceptance by the group","Clear roles and responsibilities","A predictable environment"],
+    challenges:["Adapting quickly to change or unclear expectations","Multitasking","Promoting themselves","Confronting others","Making decisions","Not over-accommodating others"],
+    leadTraits:["Inclusive","Humble","Affirming"],
+    lead:"S leaders are natural collaborators who build consensus and look for win-win solutions. Without care, they can be passive or let others take advantage of their patience.",
+    conflict:"Listens to every side and looks for a compromise. Overdone, they give in to keep the peace, seem to agree when they don't, and let problems simmer.",
+    conflictBetter:"Say it out loud: \u201cI see it differently.\u201d",
+    careers:"Counseling, human resources, nursing and healthcare, customer support, operations, project coordination, teaching.",
+    treat:[
+      ["Care about stability","Explain how risks will be handled, and show there's more than one way to do the task."],
+      ["Think logically; want to know how","Walk them through your thinking."],
+      ["Want documentation","Provide examples, data, or proof."],
+      ["Need a step-by-step sequence","Give an outline or how-to steps when introducing something new."],
+      ["Want their patience noticed","Compliment their steady perseverance, and help them speed up when it's needed."],
+      ["Resist sudden change","Give advance notice and reasons, and introduce change gradually."],
+      ["Dislike conflict","Don't come on strong. Help them voice their thoughts and feelings."],
+      ["Look for calm and peace","Keep the atmosphere friendly."],
+      ["Want sincere appreciation","Thank them specifically for their helpful, reliable work."],
+      ["Decide after talking it over","Let them work it through with the group when possible."]
+    ],
+    options:{
+      "Communicating":["Be personal, friendly, and polite.","Make expectations and deadlines clear.","Leave space for them to talk, and ask directly what they think."],
+      "In stand-ups and meetings":["Share the agenda ahead of time.","Invite them in gently by name: \u201cWhat do you think?\u201d","Don't pressure them for an instant answer."],
+      "Giving feedback":["Keep it private and calm.","Pair the correction with genuine thanks.","Give clear next steps."],
+      "Working through conflict":["Lower the temperature.","Check privately whether they actually agree.","Make it safe to disagree."],
+      "Showing appreciation":["A small tangible thank-you, like a snack or a boba run.","A sincere, specific thank-you note.","Recognize their reliability, not just the flashy wins."],
+      "When they're stressed or stuck":["Check their workload; they may be overcommitting to help others.","Give a clear plan for the change.","Reassure them their role on the team is secure."]
+    },
+    strengths:["Dependable: does what they say they will","Listens well and helps teammates who are stuck","Stays calm when things get tense","Follows through steadily to the finish","Keeps the team working together, not against each other"],
+    project:["Steady progress through Dev, card after card","Helping teammates and mentoring interns (\u201cHelped by\u201d credit!)","Keeping the checklist and making sure no one falls behind"],
+    growth:[
+      {watch:"Staying quiet when you disagree.", tryThis:"Share one concern at every stand-up, even a small one."},
+      {watch:"Struggling when the plan changes mid-sprint.", tryThis:"Ask \u201cwhat stays the same?\u201d first, then adjust."},
+      {watch:"Taking on others' work so they don't have to.", tryThis:"Help them get unstuck instead of doing it for them."}
+    ],
+    workWith:"Be sincere and patient, give advance notice of changes, and ask for their opinion directly."
+  },
+  C: {
+    name:"Conscientiousness", nick:"The Analyst", color:"var(--c)", textColor:"var(--c)", letterInk:"#fff",
+    emphasis:"Places emphasis on quality, accuracy, expertise, and competency.",
+    chips:["Reserved, steadier pace","Task-focused","Questioning"],
+    overview:"C styles are motivated by chances to learn, show expertise, and produce quality work. They focus on accuracy, stability, and challenging assumptions. Others describe them as careful, analytical, systematic, and tactful. They value data, like agendas and rubrics, and would rather gather every fact before they speak. They need to remember that perfect information only exists in a perfect world.",
+    behaviors:["Enjoys independence","Uses objective reasoning","Wants the details","Fears being wrong"],
+    motivated:"Getting it right, mastering skills, producing quality work, and clear standards.",
+    values:"Quality, accuracy, logic, and follow-through.",
+    fears:"Criticism, being wrong, strong displays of emotion, and looking incompetent.",
+    stressors:"Uncertainty and risk, making mistakes in front of others, being rushed, and having no time to work alone.",
+    influences:"Logic and high standards.",
+    underStress:"Can become withdrawn, overly critical, or stuck on small details.",
+    goals:["Objective processes","Being accurate and correct","Stability and reliability","Knowledge and expertise","Continued personal growth"],
+    challenges:["Not overanalyzing, overcriticizing, or isolating","Letting go and delegating tasks","Compromising for the good of the team","Joining team celebrations","Making quick decisions"],
+    leadTraits:["Deliberate","Humble","Resolute"],
+    lead:"C leaders are disciplined and diligent, delivering quality through careful analysis and planning. Without care, they can become perfectionists who overlook how people feel, and they may be blunt when presenting facts.",
+    conflict:"Stays objective and looks for the root cause. Overdone, they withdraw, become critical, or overpower others with facts.",
+    conflictBetter:"Share your concern early, out loud, before you've finished analyzing it.",
+    careers:"Software engineering, data analysis, accounting and finance, QA testing, research, engineering, cybersecurity.",
+    treat:[
+      ["Care about quality and accuracy","Let them help set the quality standards, then check that they're followed."],
+      ["Think logically; want to know why","Use facts to explain your reasoning."],
+      ["Are cautious","Agree together on what really needs checking, so they don't over-prepare."],
+      ["Make deliberate decisions","Give them time to find the best answer, within a deadline."],
+      ["Avoid conflict","Ask tactfully for clarification or help."],
+      ["Want genuine respect","Compliment their thoroughness and accuracy."],
+      ["Control their emotions","Approach them calmly, without big emotional displays."],
+      ["Need to be right","Let them share their knowledge and expertise with the team."],
+      ["Like agendas and rubrics","Give clear criteria up front."]
+    ],
+    options:{
+      "Communicating":["Focus on facts and details.","Keep pep talks short.","Put it in writing so they can review it.","Be patient and diplomatic."],
+      "In stand-ups and meetings":["Send the agenda and materials ahead of time.","Support your opinions with evidence.","Don't pressure them for an instant decision."],
+      "Giving feedback":["Be specific and evidence-based.","Keep it private, never in front of the class.","Separate what's wrong from what's right."],
+      "Working through conflict":["Give them space to think before responding.","Look for the root cause together.","Don't take their bluntness personally."],
+      "Showing appreciation":["One-on-one time acknowledging their ideas.","Specific praise for accuracy and quality.","Skip the big public ceremony; many C's find it silly."],
+      "When they're stressed or stuck":["Clarify the expectations and criteria.","Give them quiet focus time.","Remind them a working version beats a perfect one that never ships."]
+    },
+    strengths:["Catches errors and bugs others miss","Plans carefully and thinks through problems logically","Holds the work to a high standard of quality","Researches before deciding","Writes clear, organized documentation"],
+    project:["Testing and code review before anything hits Deploy","Writing precise acceptance criteria and the technical approach","Organizing documentation, data, and project structure"],
+    growth:[
+      {watch:"Waiting for perfect before sharing.", tryThis:"Commit working code early, then improve it next sprint."},
+      {watch:"Getting stuck researching instead of building.", tryThis:"Set a time limit on research, then decide."},
+      {watch:"Feedback that sounds like nitpicking.", tryThis:"Point out the one issue that matters most first."}
+    ],
+    workWith:"Give them details and time to think, use facts instead of feelings, and be clear about expectations."
+  }
+};
+
+const CONFLICT = {
+  D:{verb:"Demands", items:["Overly assertive","Unbending and controlling","Strong-willed","Pushes their thoughts on others"]},
+  I:{verb:"Attacks", items:["Explosive","Criticizes people and their ideas","Takes things personally","Tells everyone how they feel"]},
+  C:{verb:"Avoids", items:["Less assertive","Keeps thoughts to self","Withdraws from people or the situation","Quietly plans their next move"]},
+  S:{verb:"Complies", items:["Gives in to keep the peace","Appears to agree","Tolerates things they disagree with","Saves the relationship, even at a cost"]}
+};
+
+const SCENARIO = {
+  D:"\u201cReview starts in 20 minutes. Push it now, or I'm presenting without it.\u201d",
+  I:"\u201cSeriously? I told everyone it would be ready. This makes all of us look bad!\u201d",
+  S:"Quietly stays late to finish it themselves and doesn't say anything.",
+  C:"Finishes their own part, then documents exactly what's missing and who owned it."
+};
+
+const BLENDS = {
+  DI:{title:"The Trailblazer", desc:"Bold and energetic. You set a direction and get people excited to follow it. You shine at launching projects and selling an idea."},
+  DS:{title:"The Achiever", desc:"Determined and dependable. You push hard toward goals and keep your commitments. You shine at steady progress with strong follow-through."},
+  DC:{title:"The Challenger", desc:"Driven and precise. You want results, and you want them done right. You shine at tackling hard technical problems and setting high standards."},
+  ID:{title:"The Promoter", desc:"Persuasive and action-oriented. You rally people around ideas and keep things moving. You shine at pitches and getting the team fired up."},
+  IS:{title:"The Encourager", desc:"Warm and upbeat. You connect with people and make teammates feel valued. You shine at team culture and user-facing work."},
+  IC:{title:"The Communicator", desc:"Creative and thoughtful. You bring energy to ideas but also care about getting them right. You shine at design and explaining ideas clearly."},
+  SD:{title:"The Anchor", desc:"Calm but determined. You work at a steady pace with quiet persistence. You shine at owning a task and seeing it all the way through."},
+  SI:{title:"The Supporter", desc:"Friendly and caring. You build trust and keep the team connected. You shine at collaboration, helping teammates, and understanding users."},
+  SC:{title:"The Specialist", desc:"Steady and thorough. You are reliable, careful, and consistent. You shine at quality follow-through and finishing what the team starts."},
+  CD:{title:"The Architect", desc:"Analytical and decisive. You make decisions with logic and push for quality outcomes. You shine at technical design and problem solving."},
+  CI:{title:"The Explainer", desc:"Detailed and expressive. You care about accuracy and can make complex things clear. You shine at documentation, tutorials, and presenting technical work."},
+  CS:{title:"The Precisionist", desc:"Careful and systematic. You are precise, patient, and organized. You shine at testing, quality assurance, and working with data."}
+};
+
+/* ==========================================================
+   QUESTIONS: each answer maps to one style.
+   Answer order is shuffled on screen.
+   ========================================================== */
+const QUESTIONS = [
+  {q:"In a group project, I'm most likely to\u2026", a:{D:"Take charge and set the plan.", I:"Get everyone excited and talking.", S:"Make sure everyone feels included.", C:"Check the requirements so we do it right."}},
+  {q:"When a deadline is close, I\u2026", a:{D:"Push the team to finish, even if it isn't perfect.", I:"Keep spirits up so nobody panics.", S:"Quietly pick up whatever still needs doing.", C:"Double-check the work before we turn it in."}},
+  {q:"My friends would describe me as\u2026", a:{D:"Direct and determined.", I:"Fun and outgoing.", S:"Loyal and patient.", C:"Careful and thoughtful."}},
+  {q:"When I get a new assignment, I first\u2026", a:{D:"Figure out the fastest way to get it done.", I:"Talk it over with someone.", S:"Think about how it fits with what I'm already doing.", C:"Read every instruction carefully."}},
+  {q:"When my team disagrees, I\u2026", a:{D:"Argue for the option I think is best.", I:"Look for a compromise everyone can get excited about.", S:"Try to calm things down and keep the peace.", C:"Compare the options using facts and evidence."}},
+  {q:"The thing that frustrates me most is\u2026", a:{D:"Wasting time.", I:"Being ignored or left out.", S:"Sudden changes with no warning.", C:"Sloppy work or unclear directions."}},
+  {q:"I feel most proud when\u2026", a:{D:"I win or hit a tough goal.", I:"People recognize my ideas.", S:"I've helped someone else succeed.", C:"My work is accurate and high quality."}},
+  {q:"In a class discussion, I\u2026", a:{D:"Share my opinion quickly and confidently.", I:"Jump in often and tell stories.", S:"Listen more than I talk.", C:"Speak up when I'm sure I'm right."}},
+  {q:"When learning to code something new, I prefer to\u2026", a:{D:"Dive in and figure it out as I go.", I:"Learn with friends and bounce ideas around.", S:"Follow a step-by-step example at my own pace.", C:"Understand how it works before I start."}},
+  {q:"When my code has a bug, I\u2026", a:{D:"Try fixes fast until something works.", I:"Ask someone to look at it with me.", S:"Stay patient and work through it steadily.", C:"Trace through the logic line by line."}},
+  {q:"On a team, I'd rather be the person who\u2026", a:{D:"Makes the final call.", I:"Presents to the audience.", S:"Supports teammates who are stuck.", C:"Tests and checks for quality."}},
+  {q:"When plans suddenly change, I\u2026", a:{D:"Adapt quickly and keep moving.", I:"Get excited about trying something new.", S:"Need a little time to adjust.", C:"Want to know why, and exactly what the new plan is."}},
+  {q:"I'm most motivated by\u2026", a:{D:"Challenge and results.", I:"Fun and recognition.", S:"Stability and appreciation.", C:"Getting things exactly right."}},
+  {q:"When I make decisions, I\u2026", a:{D:"Decide fast and go.", I:"Go with my gut and how people feel.", S:"Take my time and think about how it affects others.", C:"Gather information and analyze it first."}},
+  {q:"When I'm stressed, I can become\u2026", a:{D:"Bossy or impatient.", I:"Disorganized or overly chatty.", S:"Quiet, and I go along to avoid conflict.", C:"Overly critical or stuck on details."}},
+  {q:"My notes and files are usually\u2026", a:{D:"Whatever gets the job done.", I:"Creative and a little messy.", S:"Neat and kept the same way every time.", C:"Organized and detailed."}},
+  {q:"When I give feedback to a teammate, I\u2026", a:{D:"Am blunt and to the point.", I:"Keep it positive and encouraging.", S:"Am gentle and careful not to hurt feelings.", C:"Give specific, detailed suggestions."}},
+  {q:"In a brainstorm, I\u2026", a:{D:"Push toward the boldest idea.", I:"Throw out lots of ideas quickly.", S:"Build on other people's ideas.", C:"Point out what might not work."}},
+  {q:"People sometimes misunderstand me as\u2026", a:{D:"Too pushy.", I:"Not serious enough.", S:"Too passive.", C:"Too picky."}},
+  {q:"I learn best when\u2026", a:{D:"I'm challenged and given control.", I:"It's interactive and social.", S:"The pace is steady and expectations are clear.", C:"I have time to research and understand the details."}},
+  {q:"The best part of a project is\u2026", a:{D:"Finishing and seeing the results.", I:"Sharing the final product with people.", S:"Being part of a team that works well together.", C:"Planning it carefully and getting the details right."}},
+  {q:"When someone on my team ignores a team rule, I\u2026", a:{D:"Call it out right away.", I:"Mention it with a joke to keep things light.", S:"Let it go unless it keeps happening.", C:"Point to the rule we all agreed on."}},
+  {q:"If I had to present our project, I would want to\u2026", a:{D:"Get to the point and show results.", I:"Tell a great story and get the audience involved.", S:"Share the speaking time with my team.", C:"Prepare slides with data and rehearse the details."}},
+  {q:"When my team wants to thank me, I'd most appreciate\u2026", a:{D:"A high five and credit for the result.", I:"A shout-out in front of everyone.", S:"A sincere thank-you or a small treat.", C:"A quiet, one-on-one \u201cyour work was excellent.\u201d"}}
+];
+
+/* ==========================================================
+   STATE
+   ========================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const freshState = () => ({info:{name:'',course:'',period:'',team:''}, answers:new Array(QUESTIONS.length).fill(null), current:-1, submitted:false, refA:'', refB:''});
+let state = load() || freshState();
+const optOrder = QUESTIONS.map(() => shuffle(ORDER.slice()));
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function save(){ try{ localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY));
+    if(s && Array.isArray(s.answers) && s.answers.length === QUESTIONS.length) return s;
+  }catch(e){}
+  return null;
+}
+const answeredCount = () => state.answers.filter(a => a !== null).length;
+const allAnswered = () => answeredCount() === QUESTIONS.length;
+const firstUnanswered = () => { const i = state.answers.indexOf(null); return i === -1 ? 0 : i; };
+
+/* ==========================================================
+   WHEEL
+   ========================================================== */
+function wheelSVG(dot){
+  const op = dot ? .32 : 1;
+  const quad = (d, t) => `<path d="${d}" fill="${TRAITS[t].color}" opacity="${op}"/>`;
+  const letter = (x, y, t) => `
+    <text x="${x}" y="${y}" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="60" fill="${dot ? '#1C2433' : TRAITS[t].letterInk}" opacity="${dot ? .55 : 1}">${t}</text>
+    <text x="${x}" y="${y + 24}" text-anchor="middle" font-family="Atkinson Hyperlegible, sans-serif" font-size="13" font-weight="700" fill="${dot ? '#1C2433' : TRAITS[t].letterInk}" opacity="${dot ? .7 : 1}">${TRAITS[t].name}</text>`;
+  const lab = 'font-family="Atkinson Hyperlegible, sans-serif" font-size="14" fill="#566173" text-anchor="middle"';
+  let marker = '';
+  if(dot){
+    let {x, y} = dot; const m = Math.hypot(x, y); if(m > 1){ x /= m; y /= m; }
+    marker = `<g class="dot"><circle cx="${150 + x*112}" cy="${150 - y*112}" r="13" fill="#1C2433" stroke="#fff" stroke-width="4"/></g>`;
+  }
+  return `<svg viewBox="-48 -34 396 372" role="img" aria-label="${dot ? 'Your position on the DISC wheel' : 'The DISC wheel: Dominance top left, Influence top right, Steadiness bottom right, Conscientiousness bottom left'}">
+    ${quad('M150,150 L20,150 A130,130 0 0 1 150,20 Z','D')}
+    ${quad('M150,150 L150,20 A130,130 0 0 1 280,150 Z','I')}
+    ${quad('M150,150 L280,150 A130,130 0 0 1 150,280 Z','S')}
+    ${quad('M150,150 L150,280 A130,130 0 0 1 20,150 Z','C')}
+    <line x1="20" y1="150" x2="280" y2="150" stroke="#fff" stroke-width="3"/>
+    <line x1="150" y1="20" x2="150" y2="280" stroke="#fff" stroke-width="3"/>
+    ${letter(98,108,'D')}${letter(202,108,'I')}${letter(202,212,'S')}${letter(98,212,'C')}
+    <text x="150" y="-12" ${lab}>Outgoing, faster pace</text>
+    <text x="150" y="324" ${lab}>Reserved, steadier pace</text>
+    <text x="-28" y="150" ${lab} transform="rotate(-90 -28 150)">Task-focused</text>
+    <text x="328" y="150" ${lab} transform="rotate(90 328 150)">People-focused</text>
+    ${marker}
+  </svg>`;
+}
+
+/* ==========================================================
+   LEARN
+   ========================================================== */
+function renderLearn(){
+  // Overview cards in wheel order
+  $('#traitGrid').innerHTML = ['D','I','C','S'].map(t => {
+    const T = TRAITS[t];
+    return `<article class="trait" style="--tc:${T.textColor}">
+      <header><span class="letter" aria-hidden="true">${t}</span><h3>${T.name}</h3></header>
+      <p class="nick">${T.nick}</p>
+      <p>${T.emphasis}</p>
+      <ul>${T.behaviors.map(b => `<li>${b}</li>`).join('')}</ul>
+      <button class="btn ghost small" type="button" data-deep="${t}">Go deeper on ${t}</button>
+    </article>`;
+  }).join('');
+  document.querySelectorAll('[data-deep]').forEach(b => b.addEventListener('click', () => {
+    selectDeep(b.dataset.deep);
+    $('#deepDive').scrollIntoView({behavior:'smooth', block:'start'});
+  }));
+
+  // Deep-dive tabs
+  $('#deepTabs').innerHTML = ORDER.map(t => `
+    <button class="tab" type="button" role="tab" id="tab-${t}" aria-controls="deepPanel" aria-selected="false" tabindex="-1" data-t="${t}" style="--tc:${TRAITS[t].textColor}">
+      <span class="l" aria-hidden="true">${t}</span>${TRAITS[t].name}
+    </button>`).join('');
+  const tabs = [...document.querySelectorAll('#deepTabs .tab')];
+  tabs.forEach((b, i) => {
+    b.addEventListener('click', () => selectDeep(b.dataset.t));
+    b.addEventListener('keydown', e => {
+      if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      selectDeep(next.dataset.t); next.focus();
+    });
+  });
+  selectDeep('D');
+
+  // Conflict quadrant: D, I / fight band / flight band / C, S
+  const cell = t => `<div class="cc" style="--tc:${TRAITS[t].textColor}">
+      <h4><span>${t}</span> ${CONFLICT[t].verb}</h4>
+      <ul>${CONFLICT[t].items.map(x => `<li>${x}</li>`).join('')}</ul>
+      <p class="better"><strong>Healthier move:</strong> ${TRAITS[t].conflictBetter}</p>
+    </div>`;
+  $('#conflictGrid').innerHTML = cell('D') + cell('I') +
+    '<div class="band">D and I tend to vent (fight)</div>' +
+    '<div class="band">S and C tend to suppress (flight)</div>' +
+    cell('C') + cell('S');
+
+  $('#scenario').innerHTML = ORDER.map(t => `<li style="--tc:${TRAITS[t].textColor}"><span class="l" aria-label="${TRAITS[t].name}">${t}</span><span>${SCENARIO[t]}</span></li>`).join('');
+}
+
+function selectDeep(t){
+  const T = TRAITS[t];
+  document.querySelectorAll('#deepTabs .tab').forEach(b => {
+    const on = b.dataset.t === t;
+    b.setAttribute('aria-selected', String(on));
+    b.tabIndex = on ? 0 : -1;
+  });
+  const panel = $('#deepPanel');
+  panel.setAttribute('aria-labelledby', 'tab-' + t);
+  panel.style.setProperty('--tc', T.textColor);
+  panel.innerHTML = `
+    <div class="deep-head">
+      <span class="letter" aria-hidden="true">${t}</span>
+      <div><h3>${T.name}</h3><p>${T.nick}</p></div>
+    </div>
+    <div class="chips">${T.chips.map(c => `<span>${c}</span>`).join('')}</div>
+    <p class="prose">${T.overview}</p>
+
+    <dl class="facts">
+      <div><dt>Motivated by</dt><dd>${T.motivated}</dd></div>
+      <div><dt>Values</dt><dd>${T.values}</dd></div>
+      <div><dt>Fears</dt><dd>${T.fears}</dd></div>
+      <div><dt>Stressed by</dt><dd>${T.stressors}</dd></div>
+      <div><dt>Influences others through</dt><dd>${T.influences}</dd></div>
+      <div><dt>Under stress</dt><dd>${T.underStress}</dd></div>
+      <div><dt>In conflict</dt><dd>${T.conflict}</dd></div>
+    </dl>
+
+    <div class="two">
+      <div><h4>Goals</h4><ul>${T.goals.map(g => `<li>${g}</li>`).join('')}</ul></div>
+      <div><h4>Challenges</h4><ul>${T.challenges.map(g => `<li>${g}</li>`).join('')}</ul></div>
+    </div>
+
+    <h4>Leadership style: ${T.leadTraits.join(', ')}</h4>
+    <p class="prose">${T.lead}</p>
+
+    <h4>How a high ${t} wants to be treated</h4>
+    <table class="treat">
+      <thead><tr><th scope="col">${t}'s\u2026</th><th scope="col">You can\u2026</th></tr></thead>
+      <tbody>${T.treat.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody>
+    </table>
+
+    <h4>Options for working with a high ${t}</h4>
+    <div class="opts">
+      ${Object.entries(T.options).map(([k, list]) => `<details><summary>${k}</summary><ul>${list.map(x => `<li>${x}</li>`).join('')}</ul></details>`).join('')}
+    </div>
+
+    <h4>Careers that often fit</h4>
+    <p class="prose">${T.careers}</p>`;
+}
+
+/* ==========================================================
+   NAVIGATION
+   ========================================================== */
+function goStep(name){
+  if(name === 'results' && !allAnswered()) name = 'assess';
+  ['learn','assess','results'].forEach(id => { $('#' + id).hidden = id !== name; });
+  document.querySelectorAll('.steps button').forEach(b => {
+    if(b.dataset.go === name) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current');
+  });
+  if(name === 'assess') renderAssess();
+  if(name === 'results') renderResults();
+  $('.steps').scrollIntoView({behavior:'smooth', block:'start'});
+}
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => goStep(b.dataset.go)));
+
+/* ==========================================================
+   ASSESSMENT
+   ========================================================== */
+function renderAssess(){
+  if(state.current < 0 || !state.info.name){ showInfo(); } else { showQuestion(state.current); }
+}
+function showInfo(){
+  state.current = -1;
+  $('#qCard').hidden = true; $('#infoCard').hidden = false;
+  $('#fName').value = state.info.name; $('#fCourse').value = state.info.course;
+  $('#fPeriod').value = state.info.period; $('#fTeam').value = state.info.team;
+}
+$('#infoCard').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('#fName').value.trim(), course = $('#fCourse').value;
+  if(!name || !course){
+    $('#infoErr').textContent = !name ? 'Enter your first and last name to continue.' : 'Choose your course to continue.';
+    (!name ? $('#fName') : $('#fCourse')).focus();
+    return;
+  }
+  $('#infoErr').textContent = '';
+  state.info = {name, course, period:$('#fPeriod').value.trim(), team:$('#fTeam').value.trim()};
+  save();
+  showQuestion(firstUnanswered());
+});
+
+function showQuestion(i){
+  state.current = i; save();
+  $('#infoCard').hidden = true; $('#qCard').hidden = false;
+  const q = QUESTIONS[i], last = i === QUESTIONS.length - 1;
+  $('#qNum').textContent = `Question ${i + 1} of ${QUESTIONS.length}`;
+  $('#qText').textContent = q.q;
+  const box = $('#qOpts'); box.innerHTML = '';
+  optOrder[i].forEach(t => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opt'; b.textContent = q.a[t];
+    b.dataset.t = t;
+    b.setAttribute('aria-pressed', String(state.answers[i] === t));
+    b.addEventListener('click', () => choose(i, t));
+    box.appendChild(b);
+  });
+  $('#nextBtn').textContent = last ? 'See my results' : 'Next';
+  updateNav();
+  $('#qText').focus({preventScroll:true});
+}
+function updateNav(){
+  const i = state.current, last = i === QUESTIONS.length - 1;
+  $('#nextBtn').disabled = last ? !allAnswered() : state.answers[i] === null;
+  $('#qBar').style.width = (answeredCount() / QUESTIONS.length * 100) + '%';
+  $('#qDone').textContent = `${answeredCount()} answered`;
+}
+let advanceTimer = null;
+function choose(i, t){
+  state.answers[i] = t; save();
+  document.querySelectorAll('#qOpts .opt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
+  updateNav();
+  clearTimeout(advanceTimer);
+  if(i < QUESTIONS.length - 1) advanceTimer = setTimeout(() => showQuestion(i + 1), 250);
+  else if(!allAnswered()) $('#qDone').textContent = `${answeredCount()} answered. Question ${firstUnanswered() + 1} still needs an answer.`;
+}
+$('#prevBtn').addEventListener('click', () => { clearTimeout(advanceTimer); state.current <= 0 ? showInfo() : showQuestion(state.current - 1); });
+$('#nextBtn').addEventListener('click', () => {
+  clearTimeout(advanceTimer);
+  if(state.current < QUESTIONS.length - 1) return showQuestion(state.current + 1);
+  if(!allAnswered()) return showQuestion(firstUnanswered());
+  $('#resultsTab').disabled = false;
+  goStep('results');
+});
+
+/* ==========================================================
+   SCORING AND RESULTS
+   ========================================================== */
+function score(){
+  const n = QUESTIONS.length, counts = {D:0, I:0, S:0, C:0};
+  state.answers.forEach(a => { if(a) counts[a]++; });
+  const pct = {}; ORDER.forEach(t => pct[t] = Math.round(counts[t] / n * 100));
+  const ranked = ORDER.slice().sort((a, b) => counts[b] - counts[a] || ORDER.indexOf(a) - ORDER.indexOf(b));
+  const primary = ranked[0], secondary = ranked[1];
+  return {
+    counts, pct, ranked, primary, secondary,
+    tie: counts[ranked[0]] === counts[ranked[1]],
+    blend: primary + secondary,
+    x: (counts.I + counts.S - counts.D - counts.C) / n,
+    y: (counts.D + counts.I - counts.S - counts.C) / n
+  };
+}
+
+function renderResults(){
+  const r = score(), P = TRAITS[r.primary], S = TRAITS[r.secondary], B = BLENDS[r.blend];
+  $('#resultWheel').innerHTML = wheelSVG({x:r.x, y:r.y});
+  $('#rName').textContent = `${state.info.name}: high ${r.primary} (${P.name}, ${P.nick}), supported by ${r.secondary} (${S.name})`;
+  $('#rBlend').textContent = B.title;
+  $('#rBlendDesc').textContent = B.desc;
+  $('#rTie').hidden = !r.tie;
+  $('#rTie').textContent = r.tie ? `Your ${P.name} and ${S.name} scores are tied, so you draw on both equally. Read both styles on the Learn page.` : '';
+  $('#rBars').innerHTML = r.ranked.map(t => `
+    <div class="bar" style="--tc:${TRAITS[t].color}">
+      <span>${t}: ${TRAITS[t].name}</span>
+      <span class="track"><span class="fill" style="width:${r.pct[t]}%"></span></span>
+      <span class="val">${r.pct[t]}%</span>
+    </div>`).join('');
+
+  // Shareable "how to work with me" card, written in first person
+  const W = $('#rWithMe');
+  W.style.setProperty('--tc', P.color);
+  W.innerHTML = `
+    <h3>How to work with me</h3>
+    <p class="muted">Share this with your team so they know how you work best.</p>
+    <p><strong>${esc(state.info.name)}</strong> is a high ${r.primary}: ${P.emphasis.charAt(0).toLowerCase() + P.emphasis.slice(1)}</p>
+    <h4>I work best when you\u2026</h4>
+    <ul>${P.treat.slice(0, 5).map(row => `<li>${row[1]}</li>`).join('')}</ul>
+    <h4>The best way to show me appreciation</h4>
+    <ul>${P.options["Showing appreciation"].map(x => `<li>${x}</li>`).join('')}</ul>
+    <h4>In conflict</h4>
+    <p>${P.conflict} <strong>My healthier move:</strong> ${P.conflictBetter}</p>`;
+
+  $('#rStrengths').innerHTML = P.strengths.concat(S.strengths.slice(0, 2)).map(s => `<li>${s}</li>`).join('');
+  $('#rProject').innerHTML = P.project.concat(S.project.slice(0, 1)).map(s => `<li>${s}</li>`).join('');
+  $('#rGrowth').innerHTML = P.growth.map(g => `<li>${g.watch}<span>Try this: ${g.tryThis}</span></li>`).join('');
+  $('#rOthers').innerHTML = ORDER.filter(t => t !== r.primary).map(t => `<li><strong>With a high ${t}:</strong> ${TRAITS[t].workWith}</li>`).join('');
+  $('#rLead').textContent = `You tend to lead in a way that's ${P.leadTraits.join(', ').toLowerCase()}. ${P.lead}`;
+  $('#rCareers').textContent = P.careers;
+  $('#refA').value = state.refA || ''; $('#refB').value = state.refB || '';
+  setSendState();
+  $('#rBlend').focus({preventScroll:true});
+}
+
+['refA','refB'].forEach(id => $('#' + id).addEventListener('input', e => { state[id] = e.target.value; save(); }));
+
+function setSendState(){
+  const btn = $('#sendBtn'), st = $('#sendStatus');
+  btn.disabled = state.submitted;
+  btn.textContent = state.submitted ? 'Results sent' : 'Send my results';
+  st.className = 'status' + (state.submitted ? ' ok' : '');
+  st.textContent = state.submitted ? 'Sent. Your teacher has your results.' : '';
+}
+
+$('#sendBtn').addEventListener('click', async () => {
+  const st = $('#sendStatus'), btn = $('#sendBtn');
+  if(!CONFIG.SCRIPT_URL){
+    st.className = 'status err';
+    st.textContent = 'This page isn\'t connected to a Google Sheet yet. Use Print or save as PDF and turn that in instead.';
+    return;
+  }
+  if(!state.refA.trim() || !state.refB.trim()){
+    st.className = 'status err';
+    st.textContent = 'Answer both reflection questions before sending.';
+    (!state.refA.trim() ? $('#refA') : $('#refB')).focus();
+    return;
+  }
+  const r = score();
+  const payload = {
+    name: state.info.name, course: state.info.course, period: state.info.period, team: state.info.team,
+    D: r.counts.D, I: r.counts.I, S: r.counts.S, C: r.counts.C,
+    pD: r.pct.D, pI: r.pct.I, pS: r.pct.S, pC: r.pct.C,
+    primary: r.primary, secondary: r.secondary,
+    blend: `${r.blend}: ${BLENDS[r.blend].title}`,
+    strengths: TRAITS[r.primary].strengths.concat(TRAITS[r.secondary].strengths.slice(0, 2)).join('; '),
+    reflectStrengths: state.refA.trim(), reflectStyles: state.refB.trim(),
+    answers: state.answers.join('')
+  };
+  btn.disabled = true; st.className = 'status'; st.textContent = 'Sending\u2026';
+  try{
+    // text/plain avoids a CORS preflight; Apps Script reads e.postData.contents
+    await fetch(CONFIG.SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload)});
+    state.submitted = true; save(); setSendState();
+  }catch(err){
+    btn.disabled = false;
+    st.className = 'status err';
+    st.textContent = 'Couldn\'t reach the Google Sheet. Check your internet connection, then select Send my results again.';
+  }
+});
+
+$('#printBtn').addEventListener('click', () => window.print());
+$('#retakeBtn').addEventListener('click', () => {
+  if(!confirm('Start over? Your current answers will be cleared.')) return;
+  const info = state.info;
+  state = freshState(); state.info = info; save();
+  $('#resultsTab').disabled = true;
+  goStep('assess');
+});
+
+/* ==========================================================
+   START
+   ========================================================== */
+$('#heroWheel').innerHTML = wheelSVG(null);
+renderLearn();
+if(allAnswered()) $('#resultsTab').disabled = false;
+['learn','assess','results'].forEach(id => $('#' + id).hidden = id !== 'learn');
+document.querySelector('.steps button[data-go="learn"]').setAttribute('aria-current','step');
+</script>
+</body>
+</html>
